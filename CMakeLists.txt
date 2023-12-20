@@ -24,9 +24,15 @@ message("LLVM STATUS:
   Libraries   ${LLVM_LIBRARY_DIRS}
   Targets     ${LLVM_TARGETS_TO_BUILD}"
 )
-
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY  "${CMAKE_BINARY_DIR}/bin")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 # Set the LLVM header and library paths
 include_directories(SYSTEM ${LLVM_INCLUDE_DIRS} )
+
+# NOTE: Very important for building this program
+if(NOT LLVM_ENABLE_RTTI)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti")
+endif()
 
 # Add source files
 file(GLOB_RECURSE SOURCE src/*.cpp)
@@ -34,8 +40,6 @@ file(GLOB_RECURSE SOURCE src/*.cpp)
 add_executable(mlir-toy ${SOURCE})
 
 target_include_directories(mlir-toy PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_link_directories(mlir-toy PRIVATE ${LT_LLVM_INSTALL_DIR}/lib)
 
-# Set the build directories
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib")
-
+target_link_libraries(mlir-toy PRIVATE MLIRSupport LLVMCore LLVMSupport)
