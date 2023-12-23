@@ -34,12 +34,14 @@ if(NOT LLVM_ENABLE_RTTI)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti")
 endif()
 
+link_directories(${LT_LLVM_INSTALL_DIR}/lib)
+
+link_libraries(MLIRSupport LLVMCore LLVMSupport)
 # Add source files
 file(GLOB_RECURSE SOURCE src/*.cpp)
 
 add_executable(mlir-toy ${SOURCE})
 
 target_include_directories(mlir-toy PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_link_directories(mlir-toy PRIVATE ${LT_LLVM_INSTALL_DIR}/lib)
 
-target_link_libraries(mlir-toy PRIVATE MLIRSupport LLVMCore LLVMSupport)
+add_subdirectory(others)
