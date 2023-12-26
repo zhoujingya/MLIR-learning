@@ -36,7 +36,17 @@ endif()
 
 link_directories(${LT_LLVM_INSTALL_DIR}/lib)
 
-link_libraries(MLIRSupport LLVMCore LLVMSupport)
+link_libraries(
+  MLIRSupport
+  LLVMCore
+  LLVMSupport
+  MLIRAnalysis
+  MLIRIR
+  MLIRParser
+  MLIRSideEffectInterfaces
+  MLIRTransforms
+)
+
 # Add source files
 file(GLOB_RECURSE SOURCE src/*.cpp)
 
