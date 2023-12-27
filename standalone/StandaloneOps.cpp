@@ -6,9 +6,9 @@
 //
 //===----------------------------------------------------------------------===//
 
-#include "dialect/StandaloneOps.h"
-#include "dialect/StandaloneDialect.h"
+#include "StandaloneOps.h"
+#include "StandaloneDialect.h"
 #include "mlir/IR/OpImplementation.h"
 
 #define GET_OP_CLASSES
-#include "dialect/StandaloneOps.cpp.inc"
+#include "standalone/StandaloneOps.cpp.inc"

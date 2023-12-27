@@ -20,7 +20,7 @@
 #include "llvm/Support/SourceMgr.h"
 #include "llvm/Support/ToolOutputFile.h"
 
-#include "dialect/StandaloneDialect.h"
+#include "StandaloneDialect.h"
 
 int main(int argc, char **argv) {
   mlir::registerAllPasses();

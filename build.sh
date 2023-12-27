@@ -3,11 +3,11 @@
 LLVM_TOOL_PATH=$HOME/tools/clang16
 export PATH=$LLVM_TOOL_PATH/bin:$PATH
 
-# Building toy dialect
-mlir-tblgen -gen-op-decls dialect/StandaloneOps.td -I$LLVM_TOOL_PATH/include -o dialect/StandaloneOps.h.inc
-mlir-tblgen -gen-op-defs dialect/StandaloneOps.td -I$LLVM_TOOL_PATH/include -o dialect/StandaloneOps.cpp.inc
-mlir-tblgen -gen-dialect-decls dialect/StandaloneDialect.td -I$LLVM_TOOL_PATH/include -o dialect/StandaloneDialect.h.inc
-mlir-tblgen -gen-dialect-defs dialect/StandaloneDialect.td -I$LLVM_TOOL_PATH/include -o dialect/StandaloneDialect.cpp.inc
+# Building standalone dialect
+mlir-tblgen -gen-op-decls standalone/StandaloneOps.td -I$LLVM_TOOL_PATH/include -o standalone/StandaloneOps.h.inc
+mlir-tblgen -gen-op-defs standalone/StandaloneOps.td -I$LLVM_TOOL_PATH/include -o standalone/StandaloneOps.cpp.inc
+mlir-tblgen -gen-dialect-decls standalone/StandaloneDialect.td -I$LLVM_TOOL_PATH/include -o standalone/StandaloneDialect.h.inc
+mlir-tblgen -gen-dialect-defs standalone/StandaloneDialect.td -I$LLVM_TOOL_PATH/include -o standalone/StandaloneDialect.cpp.inc
 
 cmake -B build \
     -S . \
