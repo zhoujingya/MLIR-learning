@@ -8,13 +8,9 @@ set(LT_LLVM_INCLUDE_DIR "${LT_LLVM_INSTALL_DIR}/include")
 
 list(APPEND CMAKE_PREFIX_PATH "${LT_LLVM_INSTALL_DIR}/lib/cmake/llvm/")
 
-find_package(LLVM 16 REQUIRED CONFIG)
+find_package(LLVM ${LLVM_VERSION_} REQUIRED CONFIG)
 find_package(MLIR REQUIRED CONFIG)
 
-# Here need to check llvm version
-if(NOT "16" VERSION_EQUAL "${LLVM_VERSION_MAJOR}")
-  message(FATAL_ERROR "Found LLVM ${LLVM_VERSION_MAJOR}, but need LLVM 16")
-endif()
 
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
 message(STATUS "Using LLVMConfig.cmake in: ${LT_LLVM_INSTALL_DIR}")
@@ -42,13 +38,22 @@ link_directories(${LT_LLVM_INSTALL_DIR}/lib)
 link_libraries(
   LLVMCore
   LLVMSupport
+  MLIRAnalysis
+  MLIRIR
+  MLIRParser
+  MLIRSideEffectInterfaces
+  MLIRTransforms
 )
+if(${LLVM_VERSION_MAJOR} VERSION_EQUAL "17")
+  file(GLOB_RECURSE SOURCE toy/*.cpp)
+  add_executable(mlir-toy ${SOURCE})
+  target_include_directories(mlir-toy PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+endif()
 
 # Add source files
-file(GLOB_RECURSE SOURCE toy/*.cpp)
-# add_executable(mlir-toy ${SOURCE})
 
-# target_include_directories(mlir-toy PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 add_subdirectory(others)
-add_subdirectory(standalone)
+if(${LLVM_VERSION_MAJOR} VERSION_EQUAL "16")
+  add_subdirectory(standalone)
+endif()

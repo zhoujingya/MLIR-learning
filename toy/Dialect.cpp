@@ -22,8 +22,6 @@ using namespace mlir;
 using namespace mlir::toy;
 
 #include "Dialect.cpp.inc"
-using namespace mlir;
-using namespace mlir::toy;
 
 //===----------------------------------------------------------------------===//
 // ToyDialect

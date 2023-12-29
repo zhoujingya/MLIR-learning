@@ -13,9 +13,9 @@ cmake -B build \
     -S . \
     -G Ninja \
     -DCMAKE_BUILD_TYPE=Debug \
-    -DLT_LLVM_INSTALL_DIR=$HOME/tools/clang16 \
+    -DLT_LLVM_INSTALL_DIR=$LLVM_TOOL_PATH \
     -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
-    -DENABLE_STANDALONE=ON
+    -DCMAKE_BUILD_TYPE=Debug
 
 
 cmake --build build
