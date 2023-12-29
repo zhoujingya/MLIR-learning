@@ -46,9 +46,9 @@ link_libraries(
 
 # Add source files
 file(GLOB_RECURSE SOURCE toy/*.cpp)
-add_executable(mlir-toy ${SOURCE})
+# add_executable(mlir-toy ${SOURCE})
 
-target_include_directories(mlir-toy PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+# target_include_directories(mlir-toy PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 add_subdirectory(others)
 add_subdirectory(standalone)
