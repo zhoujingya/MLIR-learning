@@ -9,12 +9,10 @@ set(LT_LLVM_INCLUDE_DIR "${LT_LLVM_INSTALL_DIR}/include")
 list(APPEND CMAKE_PREFIX_PATH "${LT_LLVM_INSTALL_DIR}/lib/cmake/llvm/")
 
 find_package(LLVM ${LLVM_VERSION_} REQUIRED CONFIG)
-find_package(MLIR REQUIRED CONFIG)
 
 
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
 message(STATUS "Using LLVMConfig.cmake in: ${LT_LLVM_INSTALL_DIR}")
-message(STATUS "Using MLIRConfig.cmake in: ${MLIR_DIR}")
 
 message("LLVM STATUS:
   Definitions ${LLVM_DEFINITIONS}
