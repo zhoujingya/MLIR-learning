@@ -40,4 +40,12 @@ def Standalone_FooOp : Standalone_Op<"foo", [Pure,
     }];
 }
 
+def Standalone_WorldOp : Standalone_Op<"world", [Pure]> {
+    let summary = "print Hello, World";
+    let description = [{
+        The "world" operation prints "Hello, World", and produces
+        no results.
+    }];
+}
+
 #endif // STANDALONE_OPS
