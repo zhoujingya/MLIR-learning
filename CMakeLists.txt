@@ -31,6 +31,16 @@ if(NOT LLVM_ENABLE_RTTI)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti")
 endif()
 
+
+find_package(MLIR REQUIRED CONFIG)
+# Append function list and include
+list(APPEND CMAKE_MODULE_PATH "${MLIR_CMAKE_DIR}")
+include(TableGen)
+include(AddLLVM) # LLVM stuff
+include(AddMLIR) # MLIR stuff
+include(HandleLLVMOptions)
+
+
 link_directories(${LT_LLVM_INSTALL_DIR}/lib)
 
 link_libraries(
@@ -54,4 +64,5 @@ endif()
 add_subdirectory(others)
 if(${LLVM_VERSION_MAJOR} VERSION_EQUAL "16")
   add_subdirectory(standalone)
+  add_subdirectory(standalone-opt)
 endif()
