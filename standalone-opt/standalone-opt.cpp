@@ -6,6 +6,7 @@
 //
 //===----------------------------------------------------------------------===//
 
+#include "/home/triton/work/MLIR-learning/standalone/StandalonePasses.h"
 #include "mlir/Dialect/Arith/IR/Arith.h"
 #include "mlir/IR/Dialect.h"
 #include "mlir/IR/MLIRContext.h"
@@ -20,7 +21,6 @@
 #include "llvm/Support/SourceMgr.h"
 #include "llvm/Support/ToolOutputFile.h"
 #include <mlir/Parser/Parser.h>
-#include "/home/triton/work/MLIR-learning/standalone/StandalonePasses.h"
 
 #include "/home/triton/work/MLIR-learning/standalone/StandaloneDialect.h"
 namespace cl = llvm::cl;
@@ -28,6 +28,9 @@ static cl::opt<std::string> inputFilename(cl::Positional,
                                           cl::desc("<input hello file>"),
                                           cl::init("-"),
                                           cl::value_desc("filename"));
+static cl::opt<bool> enableConvertToLLVM("convert-to-llvm",
+                                         cl::desc("Convert to LLVM IR"),
+                                         cl::init(false));
 int loadMLIR(mlir::MLIRContext &context,
              mlir::OwningOpRef<mlir::ModuleOp> &module) {
   llvm::ErrorOr<std::unique_ptr<llvm::MemoryBuffer>> fileOrErr =
@@ -55,11 +58,13 @@ int loadAndProcessMLIR(mlir::MLIRContext &context,
 
   // Register passes to be applied in this compile process
   mlir::PassManager passManager(&context);
-mlir::applyPassManagerCLOptions(passManager);
+  mlir::applyPassManagerCLOptions(passManager);
   //   return 4;
 
-  passManager.addPass(standalone::createLowerToLLVMPass());
-
+  // passManager.addPass(mlir::createCanonicalizerPass());
+  if(enableConvertToLLVM)
+    passManager.addPass(standalone::createLowerToLLVMPass());
+  passManager.addPass(standalone::createSimpleAttr());
   if (mlir::failed(passManager.run(*module))) {
     return 4;
   }
@@ -77,12 +82,14 @@ int main(int argc, char **argv) {
   // registry.insert<mlir::standalone::StandaloneDialect,
   //                 mlir::arith::ArithDialect, mlir::func::FuncDialect>();
   // // Add the following to include *all* MLIR Core dialects, or selectively
-  // // include what you need like above. You only need to register dialects that
+  // // include what you need like above. You only need to register dialects
+  // that
   // // will be *parsed* by the tool, not the one generated
   // // registerAllDialects(registry);
 
   // return mlir::asMainReturnCode(
-  //     mlir::MlirOptMain(argc, argv, "Standalone optimizer driver\n", registry));
+  //     mlir::MlirOptMain(argc, argv, "Standalone optimizer driver\n",
+  //     registry));
   mlir::registerMLIRContextCLOptions();
   mlir::registerPassManagerCLOptions();
 

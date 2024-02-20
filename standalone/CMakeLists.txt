@@ -19,6 +19,7 @@ add_mlir_dialect_library(MLIRStandalone
                         StandaloneDialect.cpp
                         StandaloneOps.cpp
                         LowerToLLVM.cpp
+                        createSimpleAttr.cpp
 
         ADDITIONAL_HEADER_DIRS
         ${PROJECT_SOURCE_DIR}/standalone

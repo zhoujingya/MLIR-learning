@@ -24,6 +24,7 @@
 
 namespace standalone {
 std::unique_ptr<mlir::Pass> createLowerToLLVMPass();
+std::unique_ptr<mlir::Pass> createSimpleAttr();
 } // namespace standalone
 
 #endif // MLIR_HELLO_PASSES_H
