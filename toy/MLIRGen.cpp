@@ -67,7 +67,8 @@ public:
     // We create an empty MLIR module and codegen functions one at a time and
     // add them to the module.
     theModule = mlir::ModuleOp::create(builder.getUnknownLoc());
-
+    // TODO: here only support function definition in a Toy source file
+    // Maybe late we can add variable definition
     for (FunctionAST &f : moduleAST)
       mlirGen(f);
 
