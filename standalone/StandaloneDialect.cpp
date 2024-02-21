@@ -12,7 +12,7 @@
 using namespace mlir;
 using namespace mlir::standalone;
 
-#include "StandaloneDialect.cpp.inc"
+#include "standalone/StandaloneDialect.cpp.inc"
 
 //===----------------------------------------------------------------------===//
 // Standalone dialect.

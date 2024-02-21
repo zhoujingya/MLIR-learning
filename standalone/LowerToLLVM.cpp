@@ -144,7 +144,7 @@ void StandaloneToLLVMLoweringPass::runOnOperation() {
   mlir::RewritePatternSet patterns(&getContext());
 
   populateAffineToStdConversionPatterns(patterns);
-  populateSCFToControlFlowConversionPatterns(patterns);
+  // populateSCFToControlFlowConversionPatterns(patterns);
   mlir::arith::populateArithToLLVMConversionPatterns(typeConverter, patterns);
 
   mlir::populateMemRefToLLVMConversionPatterns(typeConverter, patterns);

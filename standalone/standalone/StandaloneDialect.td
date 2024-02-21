@@ -11,6 +11,7 @@
 
 include "mlir/IR/OpBase.td"
 
+
 //===----------------------------------------------------------------------===//
 // Standalone dialect definition.
 //===----------------------------------------------------------------------===//
@@ -34,3 +35,4 @@ class Standalone_Op<string mnemonic, list<Trait> traits = []> :
         Op<Standalone_Dialect, mnemonic, traits>;
 
 #endif // STANDALONE_DIALECT
+include "StandaloneOps.td"

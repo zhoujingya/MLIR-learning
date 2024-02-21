@@ -23,7 +23,7 @@
 #include "standalone/StandaloneOps.h"
 #include "standalone/StandalonePasses.h"
 #include "llvm/ADT/Sequence.h"
-#include <standalone/StandaloneDialect.h>
+#include "standalone/StandaloneDialect.h"
 
 
 struct MyAttribute {

@@ -24,7 +24,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY  "${CMAKE_BINARY_DIR}/bin")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 
 # Set the LLVM header and library paths
-include_directories(SYSTEM ${LLVM_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(SYSTEM ${LLVM_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} include)
 
 # NOTE: Very important for building this program
 if(NOT LLVM_ENABLE_RTTI)
@@ -52,17 +52,16 @@ link_libraries(
   MLIRSideEffectInterfaces
   MLIRTransforms
 )
-if(${LLVM_VERSION_MAJOR} VERSION_EQUAL "17")
-  file(GLOB_RECURSE SOURCE toy/*.cpp)
-  add_executable(mlir-toy ${SOURCE})
-  target_include_directories(mlir-toy PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-endif()
 
-# Add source files
-
-
+add_subdirectory(include)
 add_subdirectory(others)
-if(${LLVM_VERSION_MAJOR} VERSION_EQUAL "16")
-  add_subdirectory(standalone)
-  add_subdirectory(standalone-opt)
+
+set(CMAKE_TARGET "toy" CACHE STRINGS "Default target")
+
+if(${CMAKE_TARGET} STREQUAL "toy")
+  include(toy.cmake)
+elseif(${CMAKE_TARGET} STREQUAL "standalone")
+  include(standalone.cmake)
+else()
+  message("Not suppoted target: ${CMAKE_TARGET}")
 endif()

@@ -6,7 +6,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-#include "/home/triton/work/MLIR-learning/standalone/StandalonePasses.h"
+#include "StandalonePasses.h"
 #include "mlir/Dialect/Arith/IR/Arith.h"
 #include "mlir/IR/Dialect.h"
 #include "mlir/IR/MLIRContext.h"
@@ -22,7 +22,7 @@
 #include "llvm/Support/ToolOutputFile.h"
 #include <mlir/Parser/Parser.h>
 
-#include "/home/triton/work/MLIR-learning/standalone/StandaloneDialect.h"
+#include "standalone/StandaloneDialect.h"
 namespace cl = llvm::cl;
 static cl::opt<std::string> inputFilename(cl::Positional,
                                           cl::desc("<input hello file>"),
