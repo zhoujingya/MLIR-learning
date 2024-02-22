@@ -60,4 +60,9 @@ def RedundantReshapeOptPattern : Pat<
   (ReshapeOp:$res $arg), (replaceWithValue $arg),
   [(TypesAreIdentical $res, $arg)]>;
 
+
+def DoubleTransposeEliminateOptPattern: Pat<
+  (TransposeOp(TransposeOp $arg)),
+  (replaceWithValue $arg)>;
+
 #endif // TOY_COMBINE
