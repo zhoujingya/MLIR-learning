@@ -5,7 +5,7 @@ export PATH=$LLVM_TOOL_PATH/bin:$PATH
 
 # Building toy dialec
 
-cmake -B build \
+cmake -B build_toy \
     -S . \
     -G Ninja \
     -DCMAKE_BUILD_TYPE=Debug \
@@ -15,4 +15,4 @@ cmake -B build \
     -DCMAKE_BUILD_TYPE=Debug
 
 
-cmake --build build
+cmake --build build_toy

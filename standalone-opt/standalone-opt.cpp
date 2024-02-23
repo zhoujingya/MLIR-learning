@@ -6,7 +6,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-#include "StandalonePasses.h"
+#include "standalone/StandalonePasses.h"
 #include "mlir/Dialect/Arith/IR/Arith.h"
 #include "mlir/IR/Dialect.h"
 #include "mlir/IR/MLIRContext.h"

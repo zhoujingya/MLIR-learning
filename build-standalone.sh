@@ -4,7 +4,7 @@ LLVM_TOOL_PATH=$HOME/tools/clang16
 export PATH=$LLVM_TOOL_PATH/bin:$PATH
 
 
-cmake -B build \
+cmake -B build_standalone \
     -S . \
     -G Ninja \
     -DCMAKE_BUILD_TYPE=Debug \
@@ -14,4 +14,4 @@ cmake -B build \
     -DCMAKE_TARGET="standalone"
 
 
-cmake --build build
+cmake --build build_standalone
