@@ -176,6 +176,9 @@ private:
           function.getFunctionType().getInputs(), getType(VarType{})));
     }
 
+    // Set non-main function private visibility
+    if (funcAST.getProto()->getName() != "main")
+      function.setPrivate();
     return function;
   }
 

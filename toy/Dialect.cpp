@@ -17,11 +17,66 @@
 #include "mlir/IR/BuiltinTypes.h"
 #include "mlir/IR/FunctionImplementation.h"
 #include "mlir/IR/OpImplementation.h"
+#include "mlir/Transforms/InliningUtils.h"
+#include <cassert>
+#include <llvm/ADT/STLExtras.h>
+#include <mlir/IR/Region.h>
+#include <mlir/IR/Value.h>
 
 using namespace mlir;
 using namespace mlir::toy;
 
 #include "Dialect.cpp.inc"
+
+//===----------------------------------------------------------------------===//
+// ToyInlinerInterface(函数调用inline)
+//===----------------------------------------------------------------------===//
+struct ToyInlinerInterface : public DialectInlinerInterface {
+public:
+  using DialectInlinerInterface::DialectInlinerInterface;
+
+  // All operations within toy can be inlined
+  bool isLegalToInline(Operation *call, Operation *callable,
+                       bool wouldBeCloned) const final {
+    return true;
+  }
+
+  // All operations within toy can be inlined
+  bool isLegalToInline(Operation *, Region *, bool, IRMapping &) const final {
+    return true;
+  }
+
+  // All operations within toy can be inlined
+  bool isLegalToInline(Region *, Region *, bool, IRMapping &) const final {
+    return true;
+  }
+
+  // Above three isLegalToInline functions are just transformation hooks
+  void handleTerminator(Operation *op,
+                        ArrayRef<Value> valueToRepl) const final {
+    // Only "toy.return" needs to be handled here
+    auto returnOp = cast<ReturnOp>(op);
+
+    // Replace function call return values with ReturnOp result
+    assert(returnOp->getNumOperands() == valueToRepl.size());
+
+    for(const auto &it : llvm::enumerate(returnOp->getOperands())) {
+      // Replace all uses
+      valueToRepl[it.index()].replaceAllUsesWith(it.value());
+    }
+  }
+
+  //   /// Attempts to materialize a conversion for a type mismatch between a call
+  // /// from this dialect, and a callable region. This method should generate an
+  // /// operation that takes 'input' as the only operand, and produces a single
+  // /// result of 'resultType'. If a conversion can not be generated, nullptr
+  // /// should be returned.
+  // Operation *materializeCallConversion(OpBuilder &builder, Value input,
+  //                                      Type resultType,
+  //                                      Location conversionLoc) const final {
+  //   return builder.create<CastOp>(conversionLoc, resultType, input);
+  // }
+};
 
 //===----------------------------------------------------------------------===//
 // ToyDialect
@@ -34,6 +89,7 @@ void ToyDialect::initialize() {
 #define GET_OP_LIST
 #include "Ops.cpp.inc"
       >();
+  addInterfaces<ToyInlinerInterface>();
 }
 
 //===----------------------------------------------------------------------===//
@@ -133,7 +189,8 @@ void ConstantOp::print(mlir::OpAsmPrinter &printer) {
 mlir::LogicalResult ConstantOp::verify() {
   // If the return type of the constant is not an unranked tensor, the shape
   // must match the shape of the attribute holding the data.
-  auto resultType = llvm::dyn_cast<mlir::RankedTensorType>(getResult().getType());
+  auto resultType =
+      llvm::dyn_cast<mlir::RankedTensorType>(getResult().getType());
   if (!resultType)
     return success();
 
@@ -269,7 +326,8 @@ mlir::LogicalResult ReturnOp::verify() {
   auto resultType = results.front();
 
   // Check that the result type of the function matches the operand type.
-  if (inputType == resultType || llvm::isa<mlir::UnrankedTensorType>(inputType) ||
+  if (inputType == resultType ||
+      llvm::isa<mlir::UnrankedTensorType>(inputType) ||
       llvm::isa<mlir::UnrankedTensorType>(resultType))
     return mlir::success();
 
