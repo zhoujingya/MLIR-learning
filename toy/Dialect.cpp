@@ -71,11 +71,11 @@ public:
   // /// operation that takes 'input' as the only operand, and produces a single
   // /// result of 'resultType'. If a conversion can not be generated, nullptr
   // /// should be returned.
-  // Operation *materializeCallConversion(OpBuilder &builder, Value input,
-  //                                      Type resultType,
-  //                                      Location conversionLoc) const final {
-  //   return builder.create<CastOp>(conversionLoc, resultType, input);
-  // }
+  Operation *materializeCallConversion(OpBuilder &builder, Value input,
+                                       Type resultType,
+                                       Location conversionLoc) const override {
+    return builder.create<CastOp>(conversionLoc, resultType, input);
+  }
 };
 
 //===----------------------------------------------------------------------===//
@@ -244,7 +244,18 @@ void GenericCallOp::build(mlir::OpBuilder &builder, mlir::OperationState &state,
   state.addAttribute("callee",
                      mlir::SymbolRefAttr::get(builder.getContext(), callee));
 }
+CallInterfaceCallable GenericCallOp::getCallableForCallee() {
+  return (*this)->getAttrOfType<SymbolRefAttr>("callee");
+}
+/// Set the callee for the generic call operation, this is required by the call
+/// interface.
+void GenericCallOp::setCalleeFromCallable(CallInterfaceCallable callee) {
+  (*this)->setAttr("callee", callee.get<SymbolRefAttr>());
+}
 
+/// Get the argument operands to the called function, this is required by the
+/// call interface.
+Operation::operand_range GenericCallOp::getArgOperands() { return getInputs(); }
 //===----------------------------------------------------------------------===//
 // FuncOp
 //===----------------------------------------------------------------------===//
@@ -280,7 +291,27 @@ void FuncOp::print(mlir::OpAsmPrinter &p) {
       p, *this, /*isVariadic=*/false, getFunctionTypeAttrName(),
       getArgAttrsAttrName(), getResAttrsAttrName());
 }
+/// Returns the region on the function operation that is callable.
+mlir::Region *FuncOp::getCallableRegion() { return &getBody(); }
 
+/// Returns the results types that the callable region produces when
+/// executed.
+llvm::ArrayRef<mlir::Type> FuncOp::getCallableResults() {
+  return getFunctionType().getResults();
+}
+
+/// Returns the argument attributes for all callable region arguments or
+/// null if there are none.
+ArrayAttr FuncOp::getCallableArgAttrs() {
+  return getArgAttrs().value_or(nullptr);
+}
+
+/// Returns the result attributes for all callable region results or
+// null if there are none.
+ArrayAttr FuncOp::getCallableResAttrs() {
+
+  return getResAttrs().value_or(nullptr);
+}
 //===----------------------------------------------------------------------===//
 // MulOp
 //===----------------------------------------------------------------------===//

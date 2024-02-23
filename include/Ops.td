@@ -17,6 +17,7 @@ include "mlir/IR/OpBase.td"
 include "mlir/IR/FunctionInterfaces.td"
 include "mlir/IR/SymbolInterfaces.td"
 include "mlir/Interfaces/SideEffectInterfaces.td"
+include "mlir/Interfaces/CallInterfaces.td"
 
 // Provide a definition of the 'toy' dialect in the ODS framework so that we
 // can define our operations.
@@ -109,12 +110,35 @@ def AddOp : Toy_Op<"add"> {
 }
 
 //===----------------------------------------------------------------------===//
+// CastOp
+//===----------------------------------------------------------------------===//
+
+def CastOp : Toy_Op<"cast", [
+     Pure,
+     SameOperandsAndResultShape
+  ]> {
+  let summary = "shape cast operation";
+  let description = [{
+    The "cast" operation converts a tensor from one type to an equivalent type
+    without changing any data elements. The source and destination types must
+    both be tensor types with the same element type. If both are ranked, then
+    shape is required to match. The operation is invalid if converting to a
+    mismatching constant dimension.
+  }];
+
+  let arguments = (ins F64Tensor:$input);
+  let results = (outs F64Tensor:$output);
+
+  let assemblyFormat = "$input attr-dict `:` type($input) `to` type($output)";
+}
+
+//===----------------------------------------------------------------------===//
 // FuncOp
 //===----------------------------------------------------------------------===//
 
-def FuncOp : Toy_Op<"func", [
+def FuncOp : Toy_Op<"func", [DeclareOpInterfaceMethods<CallableOpInterface>,
     FunctionOpInterface, IsolatedFromAbove
-  ]> {
+    ]> {
   let summary = "user defined function operation";
   let description = [{
     The "toy.func" operation represents a user defined function. These are
@@ -155,8 +179,6 @@ def FuncOp : Toy_Op<"func", [
 
     /// Returns the result types of this function.
     ArrayRef<Type> getResultTypes() { return getFunctionType().getResults(); }
-
-    Region *getCallableRegion() { return &getBody(); }
   }];
 
   let hasCustomAssemblyFormat = 1;
@@ -167,7 +189,8 @@ def FuncOp : Toy_Op<"func", [
 // GenericCallOp
 //===----------------------------------------------------------------------===//
 
-def GenericCallOp : Toy_Op<"generic_call"> {
+def GenericCallOp : Toy_Op<"generic_call",
+                                [DeclareOpInterfaceMethods<CallOpInterface>]> {
   let summary = "generic call operation";
   let description = [{
     Generic calls represent calls to a user defined function that needs to
