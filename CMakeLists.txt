@@ -23,6 +23,7 @@ message("LLVM STATUS:
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY  "${CMAKE_BINARY_DIR}/bin")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 
+
 # Set the LLVM header and library paths
 include_directories(SYSTEM ${LLVM_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} include)
 
@@ -55,7 +56,7 @@ link_libraries(
 
 add_subdirectory(include)
 add_subdirectory(others)
-
+add_subdirectory(test)
 set(CMAKE_TARGET "toy" CACHE STRINGS "Default target")
 
 if(${CMAKE_TARGET} STREQUAL "toy")
