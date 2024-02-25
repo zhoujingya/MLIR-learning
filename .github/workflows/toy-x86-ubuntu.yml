@@ -1,0 +1,37 @@
+name: x86-Ubuntu
+
+on: 
+  push:
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron:  '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        compiler:
+          - { compiler: GNU,  CC: gcc,   CXX: g++ }
+          - { compiler: LLVM, CC: clang, CXX: clang++ }
+        type: [Debug, Release]
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install Dependencies
+        env:
+          CC: ${{ matrix.compiler.CC }}
+          CXX: ${{ matrix.compiler.CXX }}
+        run: |
+          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+          sudo apt-add-repository "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-17 main"
+          sudo apt-get update
+          sudo apt-get install -y llvm-17 llvm-17-dev llvm-17-tools clang-17
+          sudo apt-get install python3-setuptools
+          sudo pip3 install lit
+      - name: Build toy
+        run: |
+          cd $GITHUB_WORKSPACE
+          bash build-toy.sh
+          lit build_toy/test
