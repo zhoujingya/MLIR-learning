@@ -32,14 +32,10 @@ jobs:
           tar -xf clang+llvm-17.0.6-x86_64-linux-gnu-ubuntu-22.04.tar.xz
           mv clang+llvm-17.0.6-x86_64-linux-gnu-ubuntu-22.04 clang17
           ln -s `pwd`/clang17 $HOME/tools/clang17
-          export PATH=/usr/lib/llvm-17/bin:$PATH
-          export PATH=`pwd`/clang17/bin:$PATH
-      - name: Build toy
+      - name: Build toy && Test
         run: |
           cd $GITHUB_WORKSPACE
           export PATH=/usr/lib/llvm-17/bin:$PATH
           export PATH=`pwd`/clang17/bin:$PATH
           bash build-toy.sh
-      - name: Run test
-        run: | 
           lit build_toy/test
