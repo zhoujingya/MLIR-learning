@@ -1,4 +1,4 @@
-name: x86-Ubuntu
+name: toy workflow
 
 on: 
   push:
@@ -11,14 +11,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
-    strategy:
-      matrix:
-        compiler:
-          - { compiler: GNU,  CC: gcc,   CXX: g++ }
-          - { compiler: LLVM, CC: clang, CXX: clang++ }
-        type: [Debug, Release]
     steps:
-      - uses: actions/checkout@v1
+      - name: Checkout LLVM
+        uses: actions/checkout@v3
+      - name: Install Ninja
+        uses: llvm/actions/install-ninja@main
       - name: Install Dependencies
         env:
           CC: ${{ matrix.compiler.CC }}
@@ -27,11 +24,22 @@ jobs:
           wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
           sudo apt-add-repository "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-17 main"
           sudo apt-get update
-          sudo apt-get install -y llvm-17 llvm-17-dev llvm-17-tools clang-17
+          sudo apt-get install -y llvm-17-dev llvm-17-tools
           sudo apt-get install python3-setuptools
           sudo pip3 install lit
+          mkdir $HOME/tools
+          wget https://github.com/llvm/llvm-project/releases/download/llvmorg-17.0.6/clang+llvm-17.0.6-x86_64-linux-gnu-ubuntu-22.04.tar.xz
+          tar -xf clang+llvm-17.0.6-x86_64-linux-gnu-ubuntu-22.04.tar.xz
+          mv clang+llvm-17.0.6-x86_64-linux-gnu-ubuntu-22.04 clang17
+          ln -s `pwd`/clang17 $HOME/tools/clang17
+          export PATH=/usr/lib/llvm-17/bin:$PATH
+          export PATH=`pwd`/clang17/bin:$PATH
       - name: Build toy
         run: |
           cd $GITHUB_WORKSPACE
+          export PATH=/usr/lib/llvm-17/bin:$PATH
+          export PATH=`pwd`/clang17/bin:$PATH
           bash build-toy.sh
+      - name: Run test
+        run: | 
           lit build_toy/test

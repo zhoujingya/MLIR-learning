@@ -17,7 +17,7 @@ config.test_source_root = os.path.dirname(__file__)
 
 # The list of tools required for testing - prepend them with the path specified
 # during configuration (i.e. LT_LLVM_TOOLS_DIR/bin)
-# tools = ["opt", "lli", "not", "FileCheck", "clang"]
+tools = ["opt", "lli","clang"]
 append_tools = ["mlir-toy"]
-# llvm_config.add_tool_substitutions(tools, config.llvm_tools_dir) 
+llvm_config.add_tool_substitutions(tools, config.llvm_tools_dir) 
 llvm_config.add_tool_substitutions(append_tools, config.cus_build_dir) 
