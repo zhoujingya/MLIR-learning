@@ -343,11 +343,9 @@ def TransposeOp : Toy_Op<"transpose", [Pure]> {
   let summary = "transpose operation";
 
   let arguments = (ins F64Tensor:$input);
-  let results = (outs F64Tensor);
-
-  let assemblyFormat = [{
-    `(` $input `:` type($input) `)` attr-dict `to` type(results)
-  }];
+  let results = (outs F64Tensor:$output);
+  // let assemblyFormat = "$input attr-dict `:` type($input) `to` type($output)";
+  let assemblyFormat = "$input `:` type($input) attr-dict `to` type($output)";
 
   // Enable registering canonicalization patterns with this operation.
   let hasCanonicalizer = 1;
