@@ -45,12 +45,21 @@ include(HandleLLVMOptions)
 link_directories(${LT_LLVM_INSTALL_DIR}/lib)
 
 link_libraries(
-  LLVMCore
-  LLVMSupport
   MLIRAnalysis
+  MLIRBuiltinToLLVMIRTranslation
+  MLIRCallInterfaces
+  MLIRCastInterfaces
+  MLIRExecutionEngine
   MLIRIR
+  MLIRLLVMCommonConversion
+  MLIRLLVMDialect
+  MLIRLLVMToLLVMIRTranslation
+  MLIRMemRefDialect
   MLIRParser
+  MLIRPass
   MLIRSideEffectInterfaces
+  MLIRSupport
+  MLIRTargetLLVMIRExport
   MLIRTransforms
 )
 

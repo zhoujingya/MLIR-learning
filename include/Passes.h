@@ -24,6 +24,8 @@ namespace toy {
 /// Create a pass for lowering to operations in the `Affine` and `Std` dialects,
 /// for a subset of the Toy IR (e.g. matmul).
 std::unique_ptr<mlir::Pass> createLowerToAffinePass();
+
+std::unique_ptr<mlir::Pass> createLowerToLLVMPass();
 } // namespace toy
 } // namespace mlir
 
