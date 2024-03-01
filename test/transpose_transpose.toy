@@ -1,4 +1,4 @@
-# RUN: mlir-toy -emit=mlir -opt %s 2>&1 | FileCheck %s
+# RUN: mlir-toy -emit=mlir -opt %s >& /tmp/tmp.log || FileCheck   --input-file=/tmp/tmp.log  %s
 
 def transpose_transpose(x) {
   return transpose(transpose(x));

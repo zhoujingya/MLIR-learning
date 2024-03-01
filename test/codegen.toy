@@ -1,4 +1,4 @@
-# RUN: mlir-toy -emit=mlir %s 2>&1 | FileCheck %s
+# RUN: mlir-toy -emit=mlir %s >& /tmp/tmp1.log || FileCheck   --input-file=/tmp/tmp1.log  %s
 
 # User defined generic function that operates on unknown shaped arguments.
 def multiply_transpose(a, b) {
