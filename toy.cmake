@@ -12,6 +12,7 @@ add_mlir_library(toy
     toy/MLIRGen.cpp
     toy/ToyCombine.cpp
     toy/toyToAffineLoops.cpp
+    toy/ToyToLLVM.cpp
 
     DEPENDS
     ToyOpsIncGen
