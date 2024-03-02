@@ -37,6 +37,7 @@ public:
 private:
   void dump(const VarType &type);
   void dump(VarDeclExprAST *varDecl);
+  void dump(IntDeclExprAST *varDecl);
   void dump(ExprAST *expr);
   void dump(ExprASTList *exprList);
   void dump(NumberExprAST *num);
@@ -78,7 +79,7 @@ static std::string loc(T *node) {
 void ASTDumper::dump(ExprAST *expr) {
   llvm::TypeSwitch<ExprAST *>(expr)
       .Case<BinaryExprAST, CallExprAST, LiteralExprAST, NumberExprAST,
-            PrintExprAST, ReturnExprAST, VarDeclExprAST, VariableExprAST>(
+            PrintExprAST, ReturnExprAST, VarDeclExprAST, VariableExprAST, IntDeclExprAST>(
           [&](auto *node) { this->dump(node); })
       .Default([&](ExprAST *) {
         // No match, fallback to a generic message
@@ -92,6 +93,14 @@ void ASTDumper::dump(ExprAST *expr) {
 void ASTDumper::dump(VarDeclExprAST *varDecl) {
   INDENT();
   llvm::errs() << "VarDecl " << varDecl->getName();
+  dump(varDecl->getType());
+  llvm::errs() << " " << loc(varDecl) << "\n";
+  dump(varDecl->getInitVal());
+}
+
+void ASTDumper::dump(IntDeclExprAST *varDecl) {
+  INDENT();
+  llvm::errs() << "IntDecl " << varDecl->getName();
   dump(varDecl->getType());
   llvm::errs() << " " << loc(varDecl) << "\n";
   dump(varDecl->getInitVal());

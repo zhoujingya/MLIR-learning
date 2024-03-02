@@ -307,10 +307,28 @@ private:
     return type;
   }
 
+  /// FIXME: not int yet
+  /// int :== numext
+  std::unique_ptr<IntDeclExprAST> parseIntDeclaration() {
+    auto type = std::make_unique<VarType>();
+    auto loc = lexer.getLastLocation();
+    lexer.getNextToken(); // eat int
+    std::string id(lexer.getId());
+    lexer.getNextToken(); // eat id
+    lexer.consume(Token('='));
+    type->shape.push_back(lexer.getValue());
+    auto num = std::make_unique<NumberExprAST>(lexer.getLastLocation(),
+                                       lexer.getValue());
+    lexer.getNextToken(); // eat number;
+    return std::make_unique<IntDeclExprAST>(std::move(loc), std::move(id), std::move(*type),
+                                            std::move(num));
+  }
+
   /// Parse a variable declaration, it starts with a `var` keyword followed by
   /// and identifier and an optional type (shape specification) before the
   /// initializer.
   /// decl ::= var identifier [ type ] = expr
+  ///      ::= int identifier = number
   std::unique_ptr<VarDeclExprAST> parseDeclaration() {
     if (lexer.getCurToken() != tok_var)
       return parseError<VarDeclExprAST>("var", "to begin declaration");
@@ -365,6 +383,12 @@ private:
       } else if (lexer.getCurToken() == tok_return) {
         // Return statement
         auto ret = parseReturn();
+        if (!ret)
+          return nullptr;
+        exprList->push_back(std::move(ret));
+      } else if (lexer.getCurToken() == tok_int) {
+        // Return statement
+        auto ret = parseIntDeclaration();
         if (!ret)
           return nullptr;
         exprList->push_back(std::move(ret));

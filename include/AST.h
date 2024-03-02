@@ -36,6 +36,7 @@ class ExprAST {
 public:
   enum ExprASTKind {
     Expr_VarDecl,
+    Expr_IntDecl,
     Expr_Return,
     Expr_Num,
     Expr_Literal,
@@ -125,6 +126,25 @@ public:
 
   /// LLVM style RTTI
   static bool classof(const ExprAST *c) { return c->getKind() == Expr_VarDecl; }
+};
+
+class IntDeclExprAST : public ExprAST {
+  std::string name;
+  VarType type;
+  std::unique_ptr<NumberExprAST> initVal;
+
+public:
+  IntDeclExprAST(Location loc, llvm::StringRef name, VarType type,
+                 std::unique_ptr<NumberExprAST> initVal)
+      : ExprAST(Expr_IntDecl, std::move(loc)), name(name), type(type),
+        initVal(std::move(initVal)) {}
+
+  llvm::StringRef getName() { return name; }
+  NumberExprAST *getInitVal() { return initVal.get(); }
+  const VarType &getType() { return type; }
+
+  /// LLVM style RTTI
+  static bool classof(const ExprAST *c) { return c->getKind() == Expr_IntDecl; }
 };
 
 /// Expression class for a return operator.

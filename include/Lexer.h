@@ -31,6 +31,7 @@ enum Token : int {
   tok_return = -2,
   tok_var = -3,
   tok_def = -4,
+  tok_int = -7,
 
   // primary
   tok_identifier = -5,
@@ -133,6 +134,8 @@ private:
         return tok_def;
       if (identifierStr == "var")
         return tok_var;
+      if (identifierStr == "int")
+        return tok_int;
       return tok_identifier;
     }
 

@@ -74,6 +74,12 @@ public:
     Value newLineCst = getOrCreateGlobalString(
         loc, rewriter, "nl", StringRef("\n\0", 2), parentModule);
 
+    Value helloWorld = getOrCreateGlobalString(
+        loc, rewriter, "hello_world", StringRef("Hello world\n", 18), parentModule);
+    //需要获取hello world的首地址
+
+    rewriter.create<mlir::LLVM::CallOp>(loc, rewriter.getIntegerType(32),
+                                        printfRef, helloWorld);
     // Create a loop for each of the dimensions within the shape.
     SmallVector<Value, 4> loopIvs;
     for (unsigned i = 0, e = memRefShape.size(); i != e; ++i) {

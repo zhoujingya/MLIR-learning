@@ -406,6 +406,32 @@ private:
     return value;
   }
 
+  mlir::Value mlirGen(IntDeclExprAST &intdecl) {
+    auto *init = intdecl.getInitVal();
+    if (!init) {
+      emitError(loc(intdecl.loc()),
+                "missing initializer in integer declaration");
+      return nullptr;
+    }
+
+    mlir::Value value = mlirGen(*init);
+    if (!value)
+      return nullptr;
+
+    // We have the initializer value, but in case the variable was declared
+    // with specific shape, we emit a "reshape" operation. It will get
+    // optimized out later as needed.
+    if (!intdecl.getType().shape.empty()) {
+      value = builder.create<mlir::toy::ConstantOp>(loc(intdecl.loc()),
+                                        intdecl.getInitVal()->getValue());
+    }
+
+    // Register the value in the symbol table.
+    if (failed(declare(intdecl.getName(), value)))
+      return nullptr;
+    return value;
+  }
+
   /// Codegen a list of expression, return failure if one of them hit an error.
   mlir::LogicalResult mlirGen(ExprASTList &blockAST) {
     ScopedHashTableScope<StringRef, mlir::Value> varScope(symbolTable);
@@ -414,6 +440,11 @@ private:
       // print. These can only appear in block list and not in nested
       // expressions.
       if (auto *vardecl = dyn_cast<VarDeclExprAST>(expr.get())) {
+        if (!mlirGen(*vardecl))
+          return mlir::failure();
+        continue;
+      }
+      if (auto *vardecl = dyn_cast<IntDeclExprAST>(expr.get())) {
         if (!mlirGen(*vardecl))
           return mlir::failure();
         continue;
