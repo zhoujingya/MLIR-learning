@@ -13,6 +13,10 @@ def main() {
   print(d);
 }
 
+def test() {
+  int a = 123;
+}
+
 # CHECK: module {
 # CHECK-NEXT:  toy.func private @multiply_transpose(%arg0: tensor<*xf64>, %arg1: tensor<*xf64>) -> tensor<*xf64> {
 # CHECK-NEXT:    %0 = toy.transpose %arg0 : tensor<*xf64> to tensor<*xf64>
@@ -29,5 +33,9 @@ def main() {
 # CHECK-NEXT:   %5 = toy.generic_call @multiply_transpose(%3, %1) : (tensor<2x3xf64>, tensor<2x3xf64>) -> tensor<*xf64>
 # CHECK-NEXT:   toy.print %5 : tensor<*xf64>
 # CHECK-NEXT:   toy.return
+# CHECK-NEXT:  }
+# CHECK-NEXT:  toy.func private @test() {
+# CHECK:         %1 = toy.constant dense<1.230000e+02> : tensor<f64>
+# CHECK-NEXT:    toy.return
 # CHECK-NEXT:  }
 # CHECK-NEXT: }
